@@ -182,3 +182,150 @@ else
 	echo "App icon and shortcut for darktable was not created! Exiting now!!"
 	exit 1
 fi
+
+sleep 3
+
+########################################################################
+########################################################################
+#kdenlive installation and configuration
+echo "
+Now going to install and setup kdenlive."
+#Install kdenlive appimage
+if [[ ! -f ~/kdenlive-24.02.2-x86_64.AppImage ]]; then
+	wget https://download.kde.org/stable/kdenlive/24.02/linux/kdenlive-24.02.2-x86_64.AppImage
+fi
+
+#Extract appimage to get the needed desktop file
+mkdir ~/workspace/Videos
+mkdir ~/temp
+cp kdenlive-24.02.2-x86_64.AppImage ~/temp/kdenlive-24.02.2-x86_64.AppImage
+cd ~/temp
+sudo chmod +x kdenlive-24.02.2-x86_64.AppImage
+sudo ./kdenlive-24.02.2-x86_64.AppImage --appimage-extract
+cd
+
+#Create the needed desktop file
+sudo cp ~/temp/squashfs-root/org.kde.kdenlive.desktop /usr/share/applications/
+if [[ -f /usr/share/applications/org.kde.kdenlive.desktop ]]; then
+	#Replace Exec line to open the kdenlive program with desired default open, save, export directory
+	sudo sed -i '/Exec/ s#=kdenlive %F#=/usr/bin/kdenlive-24.02.2-x86_64.AppImage#' /usr/share/applications/org.kde.kdenlive.desktop
+	_kdenlive_line=$(cat /usr/share/applications/org.kde.kdenlive.desktop | grep /usr/bin/)
+	if [[ $_kdenlive_line == "Exec=/usr/bin/kdenlive-24.02.2-x86_64.AppImage" ]]; then
+		echo "All complete installing kdenlive.  Use the ChromeOS app drawer to find and run kdenlive."
+	else
+		echo "Error writing kdenlive desktop file. Contact your Technology Administrator. Exiting now!"
+		exit 1
+	fi
+else
+	echo "App icon and shortcut for kdenlive was not created! Exiting now!!"
+	exit 1
+fi
+
+#Remove temporary files
+sudo rm -rf ~/temp
+
+#Move kdenlive appimage to /usr/bin
+sudo mv kdenlive-24.02.2-x86_64.AppImage /usr/bin/
+
+#Make kdenlive executable
+sudo chmod +x /usr/bin/kdenlive-24.02.2-x86_64.AppImage
+
+#Create rc file for desired kdenlive default locations.
+tee ~/.config/kdenlive-appimagerc << EOF
+[MainWindow]
+ToolBarsMovable=Disabled
+
+[Media Browser]
+Allow Expansion=false
+Decoration position=2
+Show hidden files=false
+Sort by=Name
+Sort directories first=true
+Sort hidden files last=false
+Sort reversed=false
+View Style=DetailTree
+
+[OnlineResources]
+provider=Freesound
+zoom=7
+
+[Recent Dirs]
+KdenliveClipFolder[$e]=$HOME/workspace/Videos/
+
+[Scope_Histogram]
+autoRefresh=true
+bEnabled=true
+gEnabled=true
+logScale=false
+rEnabled=true
+realtime=false
+rec601=false
+sEnabled=false
+yEnabled=true
+
+[Scope_RGB Parade]
+autoRefresh=true
+axis=false
+gradref=false
+paintmode=0
+realtime=false
+
+[Scope_Vectorscope]
+75PBox=false
+autoRefresh=true
+axis=false
+backgroundmode=0
+colorspace_ypbpr=false
+gain=1
+iqlines=false
+paintmode=0
+realtime=false
+
+[Scope_Waveform]
+autoRefresh=true
+paintmode=0
+realtime=false
+rec601=false
+
+[UiSettings]
+ColorSchemePath=BreezeDark.colors
+
+[bin]
+treeviewheaders=AAAA/wAAAAAAAAABAAAAAAAAAAABAAAAAAAAAAAAAAAJ/gEAAAAIAAAABgAAACgAAAADAAAAOAAAAAcAAAAwAAAAAQAAADgAAAAIAAAAZAAAAAIAAABgAAAABQAAAFEAAAAEAAAAMAAAAGIAAAAJAQEAAQAAAAAAAAAAAAAAAGT/////AAAAgQAAAAAAAAAJAAAAYgAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAD6AAAAAA/AAAAAA==
+
+[capture]
+decklink_extension=mov
+decklink_parameters=vcodec=dnxhd vb=145000k acodec=pcm_s16le threads=%threads
+grab_extension=mov
+grab_parameters=-crf 25 -vcodec libx264 -preset veryfast -threads 0
+v4l_extension=mpg
+v4l_parameters=qscale=4 ab=192k vcodec=mpeg2video acodec=mp2 threads=%threads
+
+[env]
+defaultimageapp=/usr/bin/gimp
+defaultprojectfolder[$e]=$HOME/workspace/Videos
+ffmpegpath[$e]=/tmp/.mount_kdenlih9rphx/usr/bin/ffmpeg
+ffplaypath[$e]=/tmp/.mount_kdenlih9rphx/usr/bin/ffplay
+ffprobepath[$e]=/tmp/.mount_kdenlih9rphx/usr/bin/ffprobe
+kdenliverendererpath[$e]=/tmp/.mount_kdenlizPLe3G/usr/bin/kdenlive_render
+lastCacheCheck=2024,5,13,14,40,42.309
+meltpath[$e]=/tmp/.mount_kdenlih9rphx/usr/bin/melt
+mltpath[$e]=/tmp/.mount_kdenlih9rphx/usr/share/mlt-7/profiles/
+
+[timeline]
+trackheight=69
+
+[unmanaged]
+consumerslist=avformat,multi,null,decklink,xgl,blipflash,cbrts,qglsl,rtaudio,sdl2,sdl2_audio,xml
+default_profile=atsc_1080p_2997
+force_breeze=true
+guidesCategories=Category 1:0:#9b59b6,Category 2:1:#3daee9,Category 3:2:#1abc9c,Category 4:3:#1cdc9a,Category 5:4:#c9ce3b,Category 6:5:#fdbc4b,Category 7:6:#f39c1f,Category 8:7:#f47750,Category 9:8:#da4453
+monitor_audio=false
+producerslist=avformat,avformat-novalidate,abnormal,blank,color,colour,consumer,hold,loader,loader-nogl,melt,melt_file,noise,timewarp,tone,decklink,frei0r.ising0r,frei0r.lissajous0r,frei0r.nois0r,frei0r.onecol0r,frei0r.partik0l,frei0r.plasma,frei0r.test_pat_B,frei0r.test_pat_C,frei0r.test_pat_G,frei0r.test_pat_I,frei0r.test_pat_L,frei0r.test_pat_R,glaxnimate,ladspa.1221,ladspa.1849,ladspa.1069,ladspa.1086,ladspa.1222,ladspa.1226,ladspa.1844,ladspa.1841,ladspa.1843,ladspa.1066,ladspa.1223,framebuffer,blipflash,count,pgm,qimage,qtext,kdenlivetitle,vorbis,xml,xml-string,xml-nogl
+project_fps=29.97002997002997
+use_dark_breeze=true
+widgetstyle=Default
+
+[version]
+version=24.02.2
+EOF

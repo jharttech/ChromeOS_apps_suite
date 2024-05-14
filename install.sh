@@ -154,3 +154,31 @@ tee ~/workspace/.default.svg << EOF
   <g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1" />
 </svg>
 EOF
+
+sleep 3
+
+########################################################################
+########################################################################
+#darktable installation and configuration
+
+#Install darktable.
+echo "
+Now going to install darktable."
+sudo apt install darktable
+
+#Verify the desktop shortcut 
+if [[ -f /usr/share/applications/org.darktable.darktable.desktop ]]; then
+	sudo cp /usr/share/applications/org.darktable.darktable.desktop /usr/share/applications/org.darktable.darktable.desktop_old
+	#Replace Exec line to open the darktable program with desired default open, save, export directory
+	sudo sed -i '/Exec/ s#=/usr/bin/darktable %U#=/usr/bin/darktable --datadir ~/workspace#' /usr/share/applications/org.darktable.darktable.desktop
+	_darktable_line=$(cat /usr/share/applications/org.darktable.darktable.desktop | grep datadir)
+	if [[ $_darktable_line == "Exec=/usr/bin/darktable --datadir ~/workspace" ]]; then
+		echo "All complete installing darktable. Use the ChromeOS app drawer to find and run darktable."
+	else
+		echo "Error writing darktable desktop file.  Contact your Technology Administrator. Exiting now!!"
+		exit 1
+	fi
+else
+	echo "App icon and shortcut for darktable was not created! Exiting now!!"
+	exit 1
+fi

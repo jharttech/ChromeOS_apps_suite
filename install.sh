@@ -329,3 +329,30 @@ widgetstyle=Default
 [version]
 version=24.02.2
 EOF
+
+if [[ -f ~/.config/kdenlive-appimagerc]]; then
+	echo "All complete installing kdenlive.  Use the ChromeOS app drawer to find and run kdenlive."
+else
+	echo "kdenlive is installed but not correctly configured.  Please contact your Technology Administrator!!"
+
+sleep 3
+
+########################################################################
+########################################################################
+#Wrap up script
+
+clear
+
+#Message to terminal for user
+echo "The following has been successfully installed:
+notepad++
+gimp (Replacement for Photoshop)
+inkscape (Replacement for Illustrator)
+darktable (Replacement for Lightroom)
+kdenlive (Video Editor)
+
+You can find all of these in the ChromeOS app drawer under the linux apps category. Thank you!!"
+
+sleep 5
+
+#kill -9 $PPID

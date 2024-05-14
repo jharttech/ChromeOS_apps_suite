@@ -113,3 +113,44 @@ else
 	echo "App Icon and shortcut for gimp was not created!! Exiting now!"
 	exit 1
 fi
+
+sleep 3
+
+########################################################################
+########################################################################
+#inkscapte installation and configuration
+
+#Install inkscape
+echo "
+Now going to install and configure inkscape."
+sudo apt install inkscape*
+
+#Verify the desktop shortcut was created.
+if [[ -f /usr/share/applications/org.inkscape.Inkscape.desktop ]]; then
+	echo "App and icon shortcut for inkscape was created successfully."
+else
+	echo "Error, the inkscape app and icon shortcut was not created successfully.  Exiting now!!"
+	exit 1
+fi
+
+#Create the needed default svg file for mapping inkscapes default open, save, and export directory.
+tee ~/workspace/.default.svg << EOF
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   inkscape:export-filename="~/workspace/"
+   inkscape:save-filename="~/workspace/">
+  <defs />
+  <g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1" />
+</svg>
+EOF
